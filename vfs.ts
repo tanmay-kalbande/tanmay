@@ -49,7 +49,7 @@ const buildVFS = (): VFSDirectory => {
     desktopDir.children['resume.pdf'] = {
         type: 'file',
         name: 'resume.pdf',
-        content: '/tanmay-resume.pdf',
+        content: 'https://cdn.jsdelivr.net/gh/tanmay-kalbande/tanmay-kalbande.github.io@main/Tanmay%20Kalbande%20-%20Resume.pdf',
         isLink: true,
     } as VFSFile;
 
@@ -101,7 +101,7 @@ const buildVFS = (): VFSDirectory => {
      (root.children['Documents'] as VFSDirectory).children['resume.pdf'] = {
         type: 'file',
         name: 'resume.pdf',
-        content: '/tanmay-resume.pdf',
+        content: 'https://cdn.jsdelivr.net/gh/tanmay-kalbande/tanmay-kalbande.github.io@main/Tanmay%20Kalbande%20-%20Resume.pdf',
         isLink: true,
     } as VFSFile;
 
