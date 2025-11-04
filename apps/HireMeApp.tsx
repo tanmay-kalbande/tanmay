@@ -36,7 +36,7 @@ const HireMeApp: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
                  <a 
-                    href="/tanmay-resume.pdf"
+                    href="https://cdn.jsdelivr.net/gh/tanmay-kalbande/tanmay-kalbande.github.io@main/Tanmay%20Kalbande%20-%20Resume.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center px-6 py-3 bg-amber-500 text-white font-semibold rounded-lg shadow-md hover:bg-amber-600 transition-all duration-200"
