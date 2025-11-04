@@ -44,12 +44,12 @@ import { LockKeyhole, Gamepad2 } from 'lucide-react';
 import UniversalSearch from './components/UniversalSearch';
 import DataWaveIndiaDashboard from './apps/DataWaveIndiaDashboard';
 import MatrixRainOverlay from './components/MatrixRainOverlay';
-// import { DemoSimulation } from './components/DemoSimulation'; // Comment or delete this line
 import { useWindowSize } from './hooks/useWindowSize';
 import MobileStatusBar from './components/MobileStatusBar';
 import MobileDesktop from './components/MobileDesktop';
 import MobileDock from './components/MobileDock';
 import MobileAppLibrary from './components/MobileAppLibrary';
+import { Analytics } from '@vercel/analytics/react'; // Import Vercel Analytics
 
 const AppContent: React.FC = () => {
     const { windows } = useWindowManager();
@@ -227,8 +227,6 @@ const AppContent: React.FC = () => {
                         </AnimatePresence>
                     </div>
                     <Dock />
-                    {/* Remove the DemoSimulation component call below */}
-                    {/* <DemoSimulation /> */} 
                 </>
             )}
 
@@ -252,6 +250,7 @@ const App: React.FC = () => {
     return (
         <AppProvider>
             <AppContent />
+            <Analytics />
         </AppProvider>
     );
 };
