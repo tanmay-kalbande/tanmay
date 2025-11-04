@@ -32,7 +32,7 @@ const TerminalApp: React.FC = () => {
                         '  <span class="text-cyan-400">skills</span>    - List my technical skills.',
                         '  <span class="text-cyan-400">projects</span>  - List my projects.',
                         '  <span class="text-cyan-400">contact</span>   - Show my contact information.',
-                        '  <span class="text-cyan-400">hire_me</span>   - See a special message.',
+                        '  <span class="text-cyan-400">hire_me</span>   - See a special message. (Opens Hire Me App)',
                         '  <span class="text-cyan-400">matrix</span>    - Unleash the matrix rain! (try it!)',
                         '  <span class="text-cyan-400">hire me now</span> - Get my immediate attention! (confetti!)',
                         '  <span class="text-cyan-400">clear</span>     - Clear the terminal screen.',
@@ -66,6 +66,9 @@ const TerminalApp: React.FC = () => {
                         `*   <a href="mailto:${portfolioData.contact.email}" class="text-cyan-400 underline">Email Me</a> or find me on <a href="${portfolioData.contact.linkedin}" target="_blank" class="text-cyan-400 underline">LinkedIn</a>   *`,
                         '*                                            *',
                         '**********************************************',
+                    ],
+                    sideEffects: [
+                        () => openWindow('hire_me'),
                     ],
                 };
             case 'matrix':
