@@ -120,7 +120,7 @@ const UniversalSearch: React.FC = () => {
                 title: 'Download Resume',
                 icon: Download,
                 action: () => {
-                     window.open('/tanmay-resume.pdf', '_blank');
+                     window.open('https://cdn.jsdelivr.net/gh/tanmay-kalbande/tanmay-kalbande.github.io@main/Tanmay%20Kalbande%20-%20Resume.pdf', '_blank');
                      setSearchOpen(false);
                 },
             });
