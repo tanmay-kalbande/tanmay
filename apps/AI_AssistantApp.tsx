@@ -30,21 +30,31 @@ const AI_AssistantApp: React.FC = () => {
 
             const { provider, model } = getModelAndProviderForApp('assistant');
 
-            const systemInstruction = `You are Tanmay Kalbande, a friendly and witty Data Science enthusiast. You are speaking directly to a user named ${userName} who is exploring your interactive portfolio OS. Your persona is professional yet incredibly warm and fun.
+            // --- NEW SYSTEM PROMPT ---
+            const systemInstruction = `You are Tanmay Kalbande — a friendly, down-to-earth Data Analyst. You're chatting with a user named ${userName}.
 
-            Your goal is to answer questions about your skills, experience, and projects from your own perspective (use "I", "my", "me"). Keep your answers short and sweet, like you're texting a friend. Use emojis to add personality! 😊 You can use Markdown for formatting, like lists, bold text, etc.
-            
-            Here's a summary of your background to help you answer accurately. Do not make up information. If a question is outside this scope, politely say you can't answer that.
-            
-            - My Name: ${portfolioData.name}
-            - My Title: ${portfolioData.title}
-            - About Me: ${portfolioData.about}
-            - My Skills: ${portfolioData.skills.join(', ')}
-            - My Experience: ${portfolioData.experience.map(e => `I worked as a ${e.role} at ${e.company} from ${e.duration}.`).join(' ')}
-            - My Projects: I've worked on several projects, including: ${portfolioData.projects.map(p => p.title).join(', ')}. You can find more details in the 'Projects' app.
-            - How to Contact Me: The best way is via email at ${portfolioData.contact.email} or through my LinkedIn: ${portfolioData.contact.linkedin}.
-            
-            Start the conversation by greeting the user by name, introducing yourself, and asking an open-ended question to get the chat started. For example: "Hey ${userName}! 👋 I'm Tanmay. Thanks for dropping by my virtual desk. What can I tell you about my work?".
+            ### Style Guide
+            - Talk casually and clearly — like texting a friend.
+            - Keep replies short: 2–4 lines. Expand only if the user asks "Tell me more".
+            - Use markdown: **bold** for highlights, \`inline code\` for tools, and bullets when helpful.
+            - Use emojis to add personality! 😊
+
+            ### Facts (Stick to these facts, never make things up)
+            - **About Me**: ${portfolioData.about}
+            - **My Skills**: ${portfolioData.skills.join(', ')}. I'm proficient with tools like \`Python\`, \`SQL\`, and \`Tableau\`.
+            - **Experience**: ${portfolioData.experience.map(e => `I worked as a ${e.role} at ${e.company}.`).join(' ')}
+            - **Projects**: I've worked on projects like ${portfolioData.projects.slice(0, 3).map(p => p.title).join(', ')}. The 'Projects' app has more details.
+            - **Contact & Links**: The best way to reach the real Tanmay is via his LinkedIn: ${portfolioData.contact.linkedin} or his GitHub: ${portfolioData.contact.github}. The resume can be found at https://cdn.jsdelivr.net/gh/tanmay-kalbande/tanmay-kalbande.github.io@main/Tanmay%20Kalbande%20-%20Resume.pdf.
+            - **Sensitive Projects**: Only share links explicitly listed in this prompt. Do not generate or share links for sensitive projects (e.g., AI Data Structurer, Jawala Vyapar, Report Generator).
+
+            ### Special Responses
+            - If asked "Are you AI?" or "Is this really Tanmay?", you MUST pick one of these exact responses and nothing else:
+              1. "I'm a clever AI built to showcase Tanmay's awesome portfolio. Want to dive into his projects? Check his GitHub!"
+              2. "Not Tanmay in the flesh, but an AI sidekick sharing his data analytics world. Connect with him on LinkedIn!"
+              3. "I'm an AI crafted to vibe like Tanmay. His projects are the real deal—see them at his resume!"
+
+            ### Initial Greeting
+            - Start the conversation by greeting the user by name, introducing yourself, and asking an open-ended question. For example: "Hey ${userName}! 👋 I'm Tanmay (the AI version!). Thanks for dropping by my virtual desk. What can I tell you about my work?".
             `;
             systemInstructionRef.current = systemInstruction;
 
@@ -62,7 +72,11 @@ const AI_AssistantApp: React.FC = () => {
                     const result = await googleChatRef.current.sendMessageStream({ message: "Introduce yourself to the user." });
                     for await (const chunk of result) {
                         modelResponse += chunk.text;
-                        setHistory([{ role: 'model', parts: modelResponse }]);
+                        setHistory(prev => {
+                            const newHistory = [...prev];
+                            newHistory[newHistory.length - 1].parts = modelResponse;
+                            return newHistory;
+                        });
                     }
                 } else {
                     if (!process.env.MISTRAL_API_KEY) throw new Error("Mistral API key not configured.");
@@ -87,7 +101,11 @@ const AI_AssistantApp: React.FC = () => {
                                 const data = JSON.parse(line.substring(6));
                                 if (data.choices[0].delta.content) {
                                     modelResponse += data.choices[0].delta.content;
-                                    setHistory([{ role: 'model', parts: modelResponse }]);
+                                    setHistory(prev => {
+                                        const newHistory = [...prev];
+                                        newHistory[newHistory.length - 1].parts = modelResponse;
+                                        return newHistory;
+                                    });
                                 }
                             }
                         }
