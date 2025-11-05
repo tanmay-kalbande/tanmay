@@ -53,14 +53,14 @@ import { Analytics } from '@vercel/analytics/react'; // Import Vercel Analytics
 
 const AppContent: React.FC = () => {
     const { windows } = useWindowManager();
-    const { 
-        theme, 
-        incrementClickCount, 
-        unlockSecretProjects, 
-        toast, 
-        wallpaper, 
-        addNotification, 
-        isSearchOpen, 
+    const {
+        theme,
+        incrementClickCount,
+        unlockSecretProjects,
+        toast,
+        wallpaper,
+        addNotification,
+        isSearchOpen,
         setSearchOpen,
         showMatrixRain,
         setShowMatrixRain,
@@ -90,6 +90,16 @@ const AppContent: React.FC = () => {
     }, [isMobile]);
 
     useEffect(() => {
+        if (isMobile) {
+            toast(
+                "For the best experience, please view on a desktop screen.",
+                'info',
+                0 // Duration 0 means it's persistent and must be manually closed.
+            );
+        }
+    }, [isMobile, toast]);
+
+    useEffect(() => {
         document.documentElement.className = theme;
     }, [theme]);
 
@@ -111,7 +121,7 @@ const AppContent: React.FC = () => {
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
     }, [unlockSecretProjects, addNotification]);
-    
+
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -132,7 +142,7 @@ const AppContent: React.FC = () => {
             resetMenuBarClickCount();
         }
     }, [menuBarClickCount, secretGameUnlocked, unlockSecretGame, openWindow, addNotification, toast, resetMenuBarClickCount]);
-    
+
     const handleCloseOnboarding = () => {
         setShowOnboarding(false);
         localStorage.setItem('hasVisitedPortfolioOS', 'true');
@@ -159,7 +169,7 @@ const AppContent: React.FC = () => {
         astro_viewer: AstroViewerApp, astro_tracker: AstroTrackerApp,
         web_browser: WebBrowserApp, insight_engine: InsightEngineApp,
     };
-    
+
     const activeWindow = useMemo(() => {
         const openWindows = Object.values(windows).filter(w => w.isOpen && !w.isMinimized);
         if (openWindows.length === 0) return null;
@@ -182,8 +192,8 @@ const AppContent: React.FC = () => {
                         activeWindowId={activeWindow?.id}
                         onBackFromApp={handleBackFromApp}
                     />
-                    <MobileAppLibrary 
-                        isOpen={isAppLibraryOpen} 
+                    <MobileAppLibrary
+                        isOpen={isAppLibraryOpen}
                         onClose={() => {
                             setIsAppLibraryOpen(false);
                             setAppOpenedFromLibrary(false);
