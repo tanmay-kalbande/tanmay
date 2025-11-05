@@ -30,7 +30,6 @@ const AI_AssistantApp: React.FC = () => {
 
             const { provider, model } = getModelAndProviderForApp('assistant');
 
-            // --- NEW SYSTEM PROMPT ---
             const systemInstruction = `You are Tanmay Kalbande — a friendly, down-to-earth Data Analyst. You're chatting with a user named ${userName}.
 
             ### Style Guide
@@ -60,7 +59,6 @@ const AI_AssistantApp: React.FC = () => {
 
             try {
                 let modelResponse = '';
-                // Pre-add the placeholder message BEFORE starting the stream
                 setHistory([{ role: 'model', parts: '' }]);
 
                 if (provider === 'google') {
@@ -145,7 +143,11 @@ const AI_AssistantApp: React.FC = () => {
         if (!input.trim() || loading) return;
 
         const userMessage: ChatMessage = { role: 'user', parts: input };
-        setHistory(prev => [...prev, userMessage]);
+        // --- FIX ---
+        // Create the definitive, up-to-date history array *before* making API calls or setting state.
+        const updatedHistory = [...history, userMessage];
+
+        setHistory(updatedHistory); // Update the UI with the user's message immediately.
         setLoading(true);
         setInput('');
         setError(null);
@@ -154,7 +156,6 @@ const AI_AssistantApp: React.FC = () => {
 
         try {
             let modelResponse = '';
-            // Pre-add the placeholder BEFORE streaming
             setHistory(prev => [...prev, { role: 'model', parts: '' }]);
 
             if (provider === 'google') {
@@ -169,10 +170,14 @@ const AI_AssistantApp: React.FC = () => {
                     });
                 }
             } else {
+                // --- FIX ---
+                // Use the `updatedHistory` variable which has the correct, full context.
                 const mistralHistory = [
                     { role: 'system', content: systemInstructionRef.current },
-                    ...history.map(msg => ({ role: msg.role === 'model' ? 'assistant' : 'user', content: msg.parts })),
-                    { role: 'user', content: input }
+                    ...updatedHistory.map(msg => ({ 
+                        role: msg.role === 'model' ? 'assistant' : 'user', 
+                        content: msg.parts 
+                    }))
                 ];
 
                 const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
@@ -208,7 +213,17 @@ const AI_AssistantApp: React.FC = () => {
         } catch (e: any) {
              const errorMessage = `Sorry, I couldn't process that request. The API may have timed out. (${e.message})`;
              setError(errorMessage);
-             setHistory(prev => [...prev, { role: 'model', parts: errorMessage }]);
+             // Use functional update to ensure we're acting on the latest state
+             setHistory(prev => {
+                const newHistory = [...prev];
+                // Check if the last message is a placeholder, if so, replace it with error.
+                if (newHistory.length > 0 && newHistory[newHistory.length - 1].role === 'model' && newHistory[newHistory.length - 1].parts === '') {
+                    newHistory[newHistory.length - 1].parts = errorMessage;
+                } else { // Otherwise, add a new error message
+                    newHistory.push({ role: 'model', parts: errorMessage });
+                }
+                return newHistory;
+             });
              console.error(e);
         } finally {
             setLoading(false);
